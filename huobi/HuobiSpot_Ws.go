@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	. "github.com/nntaoli-project/goex"
-	"github.com/nntaoli-project/goex/internal/logger"
 	"strings"
 	"sync"
 	"time"
@@ -51,7 +50,7 @@ func (ws *SpotWs) connectWs() {
 	})
 }
 
-func (ws *SpotWs) subscribe(sub map[string]interface{}) error {
+func (ws *SpotWs) Subscribe(sub map[string]interface{}) error {
 	ws.connectWs()
 	return ws.wsConn.Subscribe(sub)
 }
@@ -60,7 +59,7 @@ func (ws *SpotWs) SubscribeDepth(pair CurrencyPair) error {
 	if ws.depthCallback == nil {
 		return errors.New("please set depth callback func")
 	}
-	return ws.subscribe(map[string]interface{}{
+	return ws.Subscribe(map[string]interface{}{
 		"id":  "spot.depth",
 		"sub": fmt.Sprintf("market.%s.mbp.refresh.20", pair.ToLower().ToSymbol(""))})
 }
@@ -69,7 +68,7 @@ func (ws *SpotWs) SubscribeTicker(pair CurrencyPair) error {
 	if ws.tickerCallback == nil {
 		return errors.New("please set ticker call back func")
 	}
-	return ws.subscribe(map[string]interface{}{
+	return ws.Subscribe(map[string]interface{}{
 		"id":  "spot.ticker",
 		"sub": fmt.Sprintf("market.%s.detail", pair.ToLower().ToSymbol("")),
 	})
@@ -129,7 +128,7 @@ func (ws *SpotWs) handle(msg []byte) error {
 		return nil
 	}
 
-	logger.Errorf("[%s] unknown message ch , msg=%s", ws.wsConn.WsUrl, string(msg))
+	//logger.Errorf("[%s] unknown message ch , msg=%s", ws.wsConn.WsUrl, string(msg))
 
 	return nil
 }
